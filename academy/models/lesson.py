@@ -9,7 +9,7 @@ class Lesson(models.Model):
     preview = models.EmailField(verbose_name='Фото', **NULLABLE)
     video = models.URLField(verbose_name='Видео', **NULLABLE)
 
-    course = models.ForeignKey('academy.Course', on_delete=models.CASCADE, verbose_name='Курс')
+    course = models.ForeignKey('academy.Course', on_delete=models.CASCADE, verbose_name='Курс', **NULLABLE)
 
     def __str__(self):
         return f'{self.name} {self.description[:15]}..., {self.course}'
