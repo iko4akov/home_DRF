@@ -1,9 +1,10 @@
 from django.db import models
 
+NULLABLE = {'blank': True, 'null': True}
 
 class Course(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название')
-    preview = models.EmailField(verbose_name='Фото')
+    preview = models.ImageField(verbose_name='Фото', **NULLABLE)
     description = models.TextField(verbose_name='Описание')
 
     def __str__(self):

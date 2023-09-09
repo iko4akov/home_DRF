@@ -1,11 +1,13 @@
 from django.db import models
 
+NULLABLE = {'blank': True, 'null': True}
+
 
 class Lesson(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название')
     description = models.TextField(verbose_name='Описание')
-    preview = models.EmailField(verbose_name='Фото')
-    video = models.URLField(verbose_name='Видео')
+    preview = models.EmailField(verbose_name='Фото', **NULLABLE)
+    video = models.URLField(verbose_name='Видео', **NULLABLE)
 
     course = models.ForeignKey('academy.Course', on_delete=models.CASCADE, verbose_name='Курс')
 
