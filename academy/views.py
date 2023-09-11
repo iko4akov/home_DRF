@@ -1,8 +1,7 @@
-from django.shortcuts import render
 from rest_framework import viewsets, generics
 
-from academy.models import Course, Lesson
-from academy.serializers import CourseSerializer, LessonSerializer
+from academy.models import Course, Lesson, Pay
+from academy.serializers import CourseSerializer, LessonSerializer, LessonPaySerializer
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -30,4 +29,6 @@ class LessonUpdateAPIView(generics.UpdateAPIView):
 class LessonDestroyAPIView(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
 
-
+class LessonPayListAPIView(generics.ListAPIView):
+    queryset = Pay.objects.filter(lesson__isnull=False)
+    serializer_class = LessonPaySerializer

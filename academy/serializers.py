@@ -1,11 +1,18 @@
 from rest_framework import serializers
 
-from academy.models import Course, Lesson
+from academy.models import Course, Lesson, Pay
+
+
+class LessonSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Lesson
+        fields = '__all__'
 
 
 class CourseSerializer(serializers.ModelSerializer):
     # count_lesson = serializers.IntegerField(source='lesson_set.count')
     count_lesson = serializers.SerializerMethodField()
+    lesson = LessonSerializer(source='lesson_set', many=True)
 
     class Meta:
         model = Course
@@ -17,9 +24,8 @@ class CourseSerializer(serializers.ModelSerializer):
         return 'отсутствует'
 
 
-
-class LessonSerializer(serializers.ModelSerializer):
-
+class LessonPaySerializer(serializers.ModelSerializer):
+    lesson = LessonSerializer()
     class Meta:
-        model = Lesson
+        model = Pay
         fields = '__all__'
