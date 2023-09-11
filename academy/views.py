@@ -1,12 +1,18 @@
 from rest_framework import viewsets, generics
 
 from academy.models import Course, Lesson, Pay
-from academy.serializers import CourseSerializer, LessonSerializer, LessonPaySerializer
+from academy.serializers import CourseSerializer, LessonSerializer, LessonPaySerializer, CourseCreateSerializer
 
 
 class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        self.serializer_class = CourseCreateSerializer
+        return super().create(request, *args, **kwargs)
+
+
 
 class LessonCreateAPIView(generics.CreateAPIView):
     serializer_class = LessonSerializer
