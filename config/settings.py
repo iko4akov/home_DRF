@@ -21,7 +21,7 @@ load_dotenv()
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-wrk(c=)#0$fezx_siz_kijuboyih=&i0-6*1*oh*e6j6!-xm&r'
+SECRET_KEY = os.getenv('SECRET_KEY_DJANGO')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -39,7 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+
     'rest_framework',
+    'django_filters',
 
     'user',
     'academy',
@@ -83,8 +85,8 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'hdrf',
-        'HOST': 'localhost',
+        'NAME': os.getenv('DB_NAME'),
+        'HOST': os.getenv('HOST_PSQL'),
         'USER': os.getenv('USER_PSQL'),
         'PASSWORD': os.getenv('PASS_PSQL'),
     }
