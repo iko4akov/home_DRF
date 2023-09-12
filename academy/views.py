@@ -3,7 +3,8 @@ from rest_framework.filters import OrderingFilter
 from rest_framework import viewsets, generics
 
 from academy.models import Course, Lesson, Pay
-from academy.serializers import CourseSerializer, LessonSerializer, PaySerializer
+from academy.serializers import CourseSerializer, LessonSerializer, PaySerializer, UserPaySerializer
+from user.models import User
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -55,3 +56,8 @@ class PayUpdateAPIView(generics.UpdateAPIView):
 
 class PayDestroyAPIView(generics.DestroyAPIView):
     queryset = Pay.objects.all()
+
+
+class UserPayListAPIView(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserPaySerializer

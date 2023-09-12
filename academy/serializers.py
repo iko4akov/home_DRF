@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from academy.models import Course, Lesson, Pay
+from user.models import User
 
 
 class LessonSerializer(serializers.ModelSerializer):
@@ -28,4 +29,10 @@ class PaySerializer(serializers.ModelSerializer):
     class Meta:
         model = Pay
         fields = '__all__'
+
+class UserPaySerializer(serializers.ModelSerializer):
+    pay = PaySerializer(source='pay_set', many=True)
+    class Meta:
+        model = User
+        fields = ('email', 'pay')
 
