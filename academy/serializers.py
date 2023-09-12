@@ -24,26 +24,8 @@ class CourseSerializer(serializers.ModelSerializer):
         return 'отсутствует'
 
 
-class LessonPaySerializer(serializers.ModelSerializer):
-    lesson = LessonSerializer()
+class PaySerializer(serializers.ModelSerializer):
     class Meta:
         model = Pay
         fields = '__all__'
-
-class CourseCreateSerializer(serializers.ModelSerializer):
-    lesson = LessonSerializer(many=True)
-
-    class Meta:
-        model = Course
-        fields = '__all__'
-
-    def create(self, validated_data):
-        lesson = validated_data.pop('lesson_set')
-
-        course_item = Course.objects.creaye(**validated_data)
-
-        for les in lesson:
-            Lesson.objects.create(**les, course=course_item)
-
-        return course_item
 

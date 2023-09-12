@@ -1,17 +1,14 @@
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter
 from rest_framework import viewsets, generics
 
 from academy.models import Course, Lesson, Pay
-from academy.serializers import CourseSerializer, LessonSerializer, LessonPaySerializer, CourseCreateSerializer
+from academy.serializers import CourseSerializer, LessonSerializer, PaySerializer
 
 
 class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
-
-    def create(self, request, *args, **kwargs):
-        self.serializer_class = CourseCreateSerializer
-        return super().create(request, *args, **kwargs)
-
 
 
 class LessonCreateAPIView(generics.CreateAPIView):
@@ -35,6 +32,26 @@ class LessonUpdateAPIView(generics.UpdateAPIView):
 class LessonDestroyAPIView(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
 
-class LessonPayListAPIView(generics.ListAPIView):
-    queryset = Pay.objects.filter(lesson__isnull=False)
-    serializer_class = LessonPaySerializer
+
+class PayCreateAPIView(generics.CreateAPIView):
+    serializer_class = PaySerializer
+
+class PayListAPIView(generics.ListAPIView):
+    serializer_class = PaySerializer
+    queryset = Pay.objects.all()
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_fields = ('lesson', 'course')
+    ordering_fields = ('date',)
+
+class PayRetrieveAPIView(generics.RetrieveAPIView):
+    serializer_class = PaySerializer
+    queryset = Pay.objects.all()
+
+
+class PayUpdateAPIView(generics.UpdateAPIView):
+    serializer_class = PaySerializer
+    queryset = Pay.objects.all()
+
+
+class PayDestroyAPIView(generics.DestroyAPIView):
+    queryset = Pay.objects.all()

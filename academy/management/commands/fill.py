@@ -37,12 +37,18 @@ class Command(BaseCommand):
 
 
         list_pay = [
-            {'user': User.objects.get(pk=1), 'lesson': Lesson.objects.get(pk=1), 'price': 10000, 'cash': False},
-            {'user': User.objects.get(pk=2), 'lesson': Lesson.objects.get(pk=2), 'price': 20000, 'cash': False},
-            {'user': User.objects.get(pk=3), 'lesson': Lesson.objects.get(pk=3), 'price': 30000, 'cash': False},
-            {'user': User.objects.get(pk=1), 'lesson': Lesson.objects.get(pk=3), 'price': 40000, 'cash': False},
-            {'user': User.objects.get(pk=1), 'lesson': Lesson.objects.get(pk=3), 'price': 50000, 'cash': False},
-            {'user': User.objects.get(pk=1), 'lesson': Lesson.objects.get(pk=2), 'price': 60000, 'cash': False}
+            {'user': User.objects.get(pk=1), 'lesson': Lesson.objects.get(pk=5), 'price': 10000, 'cash': False,
+             'course': Course.objects.get(pk=1)},
+            {'user': User.objects.get(pk=2), 'lesson': Lesson.objects.get(pk=6), 'price': 20000, 'cash': False,
+             'course': Course.objects.get(pk=2)},
+            {'user': User.objects.get(pk=3), 'lesson': Lesson.objects.get(pk=4), 'price': 30000, 'cash': False,
+             'course': Course.objects.get(pk=3)},
+            {'user': User.objects.get(pk=1), 'lesson': Lesson.objects.get(pk=3), 'price': 40000, 'cash': False,
+             'course': Course.objects.get(pk=1)},
+            {'user': User.objects.get(pk=1), 'lesson': Lesson.objects.get(pk=3), 'price': 50000, 'cash': False,
+             'course': Course.objects.get(pk=3)},
+            {'user': User.objects.get(pk=1), 'lesson': Lesson.objects.get(pk=2), 'price': 60000, 'cash': False,
+             'course': Course.objects.get(pk=2)}
         ]
 
         pay_for_create = []
