@@ -10,6 +10,23 @@ class LessonSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CourseCreateSerializer(serializers.ModelSerializer):
+    lesson = LessonSerializer(many=True)
+    class Meta:
+        model = Course
+        fields = '__all__'
+
+    def create(self, validated_data):
+        lesson = validated_data.pop('lesson')
+
+        course_item = Course.objects.create(**validated_data)
+
+        for less in lesson:
+            Lesson.objects.create(**less, course=course_item)
+
+        return course_item
+
+
 class CourseSerializer(serializers.ModelSerializer):
     # count_lesson = serializers.IntegerField(source='lesson_set.count')
     count_lesson = serializers.SerializerMethodField()
@@ -35,4 +52,3 @@ class UserPaySerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('email', 'pay')
-
