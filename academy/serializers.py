@@ -11,18 +11,18 @@ class LessonSerializer(serializers.ModelSerializer):
 
 
 class CourseCreateSerializer(serializers.ModelSerializer):
-    lesson = LessonSerializer(many=True)
+    lesson = LessonSerializer(many=True, source='lesson_set')
     class Meta:
         model = Course
         fields = '__all__'
 
     def create(self, validated_data):
-        lesson = validated_data.pop('lesson')
-
+        lesson = validated_data.pop('lesson_set')
         course_item = Course.objects.create(**validated_data)
+        user = self.context['request'].user
 
         for less in lesson:
-            Lesson.objects.create(**less, course=course_item)
+            Lesson.objects.create(**less, course=course_item, owner=user)
 
         return course_item
 
@@ -41,6 +41,9 @@ class CourseSerializer(serializers.ModelSerializer):
             return instance.lesson_set.count()
         return 'отсутствует'
 
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name')
+        instance.description = validated_data.get('description')
 
 class PaySerializer(serializers.ModelSerializer):
     class Meta:
