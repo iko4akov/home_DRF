@@ -41,6 +41,9 @@ class CourseSerializer(serializers.ModelSerializer):
             return instance.lesson_set.count()
         return 'отсутствует'
 
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name')
+        instance.description = validated_data.get('description')
 
 class PaySerializer(serializers.ModelSerializer):
     class Meta:

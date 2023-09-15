@@ -3,6 +3,7 @@ from rest_framework.filters import OrderingFilter
 from rest_framework import viewsets, generics
 
 from academy.models import Course, Lesson, Pay
+from academy.permissions import Moderator, IsOwner, IsOwnerOrStaff, IsStaff
 from academy.serializers import CourseSerializer, LessonSerializer, PaySerializer, UserPaySerializer, \
     CourseCreateSerializer
 from user.models import User
@@ -17,41 +18,51 @@ class CourseViewSet(viewsets.ModelViewSet):
         return super().create(request, *args, **kwargs)
 
     def perform_create(self, serializer):
-        self.serializer_class = CourseCreateSerializer
         new_course = serializer.save()
         new_course.owner = self.request.user
         new_course.save()
 
-
+    def get_permissions(self):
+        if self.action == 'create' or self.action == 'destroy':
+            return [Moderator()]
+        elif self.action == 'update' or self.action == 'retrieve' or self.action == 'list':
+            return [IsOwnerOrStaff]
 
 
 class LessonCreateAPIView(generics.CreateAPIView):
     serializer_class = LessonSerializer
-
+    permission_classes = [Moderator]
     def perform_create(self, serializer):
         new_lesson = serializer.save()
         new_lesson.owner = self.request.user
         new_lesson.save()
 
 
-
 class LessonListAPIView(generics.ListAPIView):
     serializer_class = LessonSerializer
-    queryset = Lesson.objects.all()
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            return Lesson.objects.all()
+        else:
+            return Lesson.objects.filter(owner=self.request.user.pk)
 
 
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
+    permission_classes = [IsOwnerOrStaff]
 
 
 class LessonUpdateAPIView(generics.UpdateAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
+    permission_classes = [IsOwnerOrStaff]
 
 
 class LessonDestroyAPIView(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
+    permission_classes = [IsOwner]
+
 
 
 class PayCreateAPIView(generics.CreateAPIView):
