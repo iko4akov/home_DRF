@@ -1,9 +1,10 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from rest_framework import viewsets, generics
+from rest_framework.permissions import IsAdminUser
 
 from academy.models import Course, Lesson, Pay
-from academy.permissions import Moderator, IsOwner, IsOwnerOrStaff, IsStaff
+from academy.permissions import IsModerator, IsOwner, IsOwnerOrStaff, IsStaff
 from academy.serializers import CourseSerializer, LessonSerializer, PaySerializer, UserPaySerializer, \
     CourseCreateSerializer
 from user.models import User
@@ -11,7 +12,16 @@ from user.models import User
 
 class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
-    queryset = Course.objects.all()
+    permission_classes = []
+    def get_queryset(self):
+        if self.action == 'list':
+            if self.request.user.is_staff:
+                return Course.objects.all()
+            else:
+                return Course.objects.filter(owner=self.request.user.pk)
+        else:
+            return Course.objects.all()
+
 
     def create(self, request, *args, **kwargs):
         self.serializer_class = CourseCreateSerializer
@@ -23,15 +33,21 @@ class CourseViewSet(viewsets.ModelViewSet):
         new_course.save()
 
     def get_permissions(self):
-        if self.action == 'create' or self.action == 'destroy':
-            return [Moderator()]
-        elif self.action == 'update' or self.action == 'retrieve' or self.action == 'list':
-            return [IsOwnerOrStaff]
+        if self.action == 'create':
+            return [IsModerator()]
+        elif self.action == 'destroy':
+            return [IsOwner()]
+        elif self.action == 'retrieve' or self.action == 'update':
+            return [IsOwnerOrStaff()]
+        else:
+            return []
+
+
 
 
 class LessonCreateAPIView(generics.CreateAPIView):
     serializer_class = LessonSerializer
-    permission_classes = [Moderator]
+    permission_classes = [IsModerator]
     def perform_create(self, serializer):
         new_lesson = serializer.save()
         new_lesson.owner = self.request.user

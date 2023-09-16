@@ -7,8 +7,9 @@ class IsOwnerOrStaff(BasePermission):
             return True
         return request.user == view.get_object().owner
 
-class Moderator(BasePermission):
-    def has_permission(self, request, view):
+class IsModerator(BasePermission):
+    def has_permission(self, request, view=None):
+        print(request.__dict__)
         if request.user.is_staff:
             return False
         return True
