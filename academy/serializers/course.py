@@ -1,20 +1,13 @@
 from rest_framework import serializers
 
-from academy.models import Course, Lesson, Pay
-from user.models import User
-
-
-class LessonSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Lesson
-        fields = '__all__'
-
+from academy.models import Course, Lesson
+from .lesson import LessonSerializer
 
 class CourseCreateSerializer(serializers.ModelSerializer):
     lesson = LessonSerializer(many=True, source='lesson_set')
     class Meta:
         model = Course
-        fields = '__all__'
+        fields = ('name', 'lesson', 'description')
 
     def create(self, validated_data):
         lesson = validated_data.pop('lesson_set')
@@ -40,18 +33,3 @@ class CourseSerializer(serializers.ModelSerializer):
         if instance.lesson_set.count() > 1:
             return instance.lesson_set.count()
         return 'отсутствует'
-
-    def update(self, instance, validated_data):
-        instance.name = validated_data.get('name')
-        instance.description = validated_data.get('description')
-
-class PaySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Pay
-        fields = '__all__'
-
-class UserPaySerializer(serializers.ModelSerializer):
-    pay = PaySerializer(source='pay_set', many=True)
-    class Meta:
-        model = User
-        fields = ('email', 'pay')
