@@ -3,6 +3,7 @@ from rest_framework.filters import OrderingFilter
 from rest_framework import viewsets, generics
 
 from academy.models import Course, Lesson, Pay, Subscription
+from academy.paginators import AcademyPaginator
 from academy.permissions import IsModerator, IsOwner, IsOwnerOrStaff
 from academy.serializers import CourseSerializer, LessonSerializer, PaySerializer, UserPaySerializer, \
     CourseCreateSerializer
@@ -13,6 +14,7 @@ from user.models import User
 class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
     permission_classes = []
+    pagination_class = AcademyPaginator
     def get_queryset(self):
         if self.action == 'list':
             if self.request.user.is_staff:
@@ -56,6 +58,7 @@ class LessonCreateAPIView(generics.CreateAPIView):
 
 class LessonListAPIView(generics.ListAPIView):
     serializer_class = LessonSerializer
+    pagination_class = AcademyPaginator
     def get_queryset(self):
         if self.request.user.is_staff:
             return Lesson.objects.all()
