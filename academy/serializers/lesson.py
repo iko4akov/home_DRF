@@ -4,6 +4,7 @@ from academy.validators import VideoValidator
 
 
 class LessonSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Lesson
         fields = '__all__'

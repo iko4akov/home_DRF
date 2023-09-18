@@ -8,7 +8,7 @@ class VideoValidator:
         self.field = field
 
     def __call__(self, value):
-        succesful_urls = ['https://youtube.com', 'https://www.youtube.co']
+        succesful_urls = ['https://youtube.com', 'https://www.youtube.co', None]
         video_field = dict(value).get(self.field)
         if video_field not in succesful_urls:
             raise ValidationError('Ссылка на видео должна начинаться с https://youtube.com')
