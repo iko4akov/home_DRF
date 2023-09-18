@@ -9,7 +9,6 @@ class IsOwnerOrStaff(BasePermission):
 
 class IsModerator(BasePermission):
     def has_permission(self, request, view=None):
-        print(request.__dict__)
         if request.user.is_staff:
             return False
         return True

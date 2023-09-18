@@ -8,4 +8,5 @@
 - `python3 manage.py csu`
 - `python3 manage.py fill_users`
 - `python3 manage.py fill`
-
+run tests
+~~coverage run --source='.' manage.py test~~

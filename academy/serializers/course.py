@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from academy.models import Course, Lesson
+from academy.models import Course, Lesson, Subscription
 from .lesson import LessonSerializer
 
 class CourseCreateSerializer(serializers.ModelSerializer):
@@ -24,6 +24,7 @@ class CourseSerializer(serializers.ModelSerializer):
     # count_lesson = serializers.IntegerField(source='lesson_set.count')
     count_lesson = serializers.SerializerMethodField()
     lesson = LessonSerializer(source='lesson_set', many=True)
+    subscribe = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
@@ -33,3 +34,11 @@ class CourseSerializer(serializers.ModelSerializer):
         if instance.lesson_set.count() > 1:
             return instance.lesson_set.count()
         return 'отсутствует'
+
+    def get_subscribe(self, instance):
+        user = self.context['request'].user
+        if Subscription.objects.filter(user=user, course=instance):
+            return 'True'
+
+        else:
+            return False

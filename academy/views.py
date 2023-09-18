@@ -1,18 +1,22 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from rest_framework import viewsets, generics
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import AllowAny
 
-from academy.models import Course, Lesson, Pay
-from academy.permissions import IsModerator, IsOwner, IsOwnerOrStaff, IsStaff
+from academy.models import Course, Lesson, Pay, Subscription
+from academy.paginators import AcademyPaginator
+from academy.permissions import IsModerator, IsOwner, IsOwnerOrStaff
 from academy.serializers import CourseSerializer, LessonSerializer, PaySerializer, UserPaySerializer, \
     CourseCreateSerializer
+from academy.serializers.subscription import SubscriptionSerializer
 from user.models import User
 
 
 class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
     permission_classes = []
+    pagination_class = AcademyPaginator
+
     def get_queryset(self):
         if self.action == 'list':
             if self.request.user.is_staff:
@@ -21,7 +25,6 @@ class CourseViewSet(viewsets.ModelViewSet):
                 return Course.objects.filter(owner=self.request.user.pk)
         else:
             return Course.objects.all()
-
 
     def create(self, request, *args, **kwargs):
         self.serializer_class = CourseCreateSerializer
@@ -43,11 +46,11 @@ class CourseViewSet(viewsets.ModelViewSet):
             return []
 
 
-
-
 class LessonCreateAPIView(generics.CreateAPIView):
     serializer_class = LessonSerializer
     permission_classes = [IsModerator]
+    # permission_classes = [AllowAny]
+
     def perform_create(self, serializer):
         new_lesson = serializer.save()
         new_lesson.owner = self.request.user
@@ -56,11 +59,13 @@ class LessonCreateAPIView(generics.CreateAPIView):
 
 class LessonListAPIView(generics.ListAPIView):
     serializer_class = LessonSerializer
+    pagination_class = AcademyPaginator
+
     def get_queryset(self):
         if self.request.user.is_staff:
-            return Lesson.objects.all()
+            return Lesson.objects.all().order_by('pk')
         else:
-            return Lesson.objects.filter(owner=self.request.user.pk)
+            return Lesson.objects.filter(owner=self.request.user.pk).order_by('pk')
 
 
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
@@ -80,9 +85,9 @@ class LessonDestroyAPIView(generics.DestroyAPIView):
     permission_classes = [IsOwner]
 
 
-
 class PayCreateAPIView(generics.CreateAPIView):
     serializer_class = PaySerializer
+
 
 class PayListAPIView(generics.ListAPIView):
     serializer_class = PaySerializer
@@ -90,6 +95,7 @@ class PayListAPIView(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ('lesson', 'course')
     ordering_fields = ('date',)
+
 
 class PayRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = PaySerializer
@@ -110,4 +116,16 @@ class UserPayListAPIView(generics.ListAPIView):
     serializer_class = UserPaySerializer
 
 
+class SubscriptionCreateAPIView(generics.CreateAPIView):
+    queryset = Subscription.objects.all()
+    serializer_class = SubscriptionSerializer
 
+
+class SubscriptionDestroyAPIView(generics.DestroyAPIView):
+    queryset = Subscription.objects.all()
+    serializer_class = SubscriptionSerializer
+
+
+class SubscriptionListAPIView(generics.ListAPIView):
+    queryset = Subscription.objects.all()
+    serializer_class = SubscriptionSerializer
