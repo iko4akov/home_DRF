@@ -2,10 +2,11 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from rest_framework import viewsets, generics
 
-from academy.models import Course, Lesson, Pay
+from academy.models import Course, Lesson, Pay, Subscription
 from academy.permissions import IsModerator, IsOwner, IsOwnerOrStaff
 from academy.serializers import CourseSerializer, LessonSerializer, PaySerializer, UserPaySerializer, \
     CourseCreateSerializer
+from academy.serializers.subscription import SubscriptionSerializer
 from user.models import User
 
 
@@ -108,5 +109,14 @@ class UserPayListAPIView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserPaySerializer
 
+class SubscriptionCreateAPIView(generics.CreateAPIView):
+    queryset = Subscription.objects.all()
+    serializer_class = SubscriptionSerializer
 
+class SubscriptionDestroyAPIView(generics.DestroyAPIView):
+    queryset = Subscription.objects.all()
+    serializer_class = SubscriptionSerializer
 
+class SubscriptionListAPIView(generics.ListAPIView):
+    queryset = Subscription.objects.all()
+    serializer_class = SubscriptionSerializer
