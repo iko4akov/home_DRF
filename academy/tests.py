@@ -27,20 +27,25 @@ class HeadersMixin:
         return headers
 
 class AcademyTestCase(APITestCase, HeadersMixin):
+    headers = None
+
     def setUp(self) -> None:
-        pass
+        self.headers = self.get_headers()
+        Lesson.objects.create(name='test1', description='test1descr1', owner=User.objects.get(pk=2))
+
     def test_create_lesson(self):
         """Test case 1 create lesson"""
 
         data = {
-            'name': 'test1',
-            'description': 'test1descr'
+            'name': 'test2',
+            'description': '2',
+            'owner': 2
         }
 
         respounse = self.client.post(
             '/lesson/create/',
             data=data,
-            headers=self.get_headers()
+            headers=self.headers
         )
 
         self.assertEqual(
@@ -54,34 +59,49 @@ class AcademyTestCase(APITestCase, HeadersMixin):
         )
 
         self.assertTrue(
+            Lesson.objects.get(pk=2).name,
+            data.get('name')
+        )
+
+
+    def test_delete_lesson(self):
+        """Test Case delete lesson"""
+
+
+        respounse = self.client.delete(
+            '/lesson/delete/3/',
+            headers=self.headers
+        )
+
+        self.assertEqual(
+            respounse.status_code,
+            status.HTTP_204_NO_CONTENT
+        )
+
+        self.assertFalse(
             Lesson.objects.all().exists()
         )
+
+
     def test_list_lesson(self):
         """test case listlesson"""
-        headers = self.get_headers()
-
-        Lesson.objects.create(name='test1', description='test1descr1', owner=User.objects.get(pk=2))
-
 
         respounse = self.client.get(
             '/lesson/',
-            headers=headers
+            headers=self.headers
         )
         self.assertEqual(
             respounse.status_code,
             status.HTTP_200_OK
         )
-
         self.assertEqual(
-            Lesson.objects.get(pk=1).name,
+            Lesson.objects.get(pk=4).name,
             respounse.json().get('results')[0].get('name')
         )
 
     def test_update_lesson(self):
         """Test case update lesson"""
-        headers = self.get_headers()
 
-        Lesson.objects.create(name='test1', description='test1descr1', owner=User.objects.get(pk=2))
 
         data = {
             'name': 'testupdate',
@@ -89,9 +109,9 @@ class AcademyTestCase(APITestCase, HeadersMixin):
         }
 
         respounse = self.client.patch(
-            '/lesson/update/1/',
+            '/lesson/update/5/',
             data=data,
-            headers=headers
+            headers=self.headers
         )
 
         self.assertEqual(
@@ -104,23 +124,3 @@ class AcademyTestCase(APITestCase, HeadersMixin):
             respounse.json().get('name')
         )
 
-    def test_delete_lesson(self):
-        """Test Case delete lesson"""
-        headers = self.get_headers()
-
-        Lesson.objects.create(name='test1', description='test1descr1', owner=User.objects.get(pk=2))
-
-
-        respounse = self.client.delete(
-            '/lesson/delete/1/',
-            headers=headers
-        )
-
-        self.assertEqual(
-            respounse.status_code,
-            status.HTTP_204_NO_CONTENT
-        )
-
-        self.assertFalse(
-            Lesson.objects.all().exists()
-        )
