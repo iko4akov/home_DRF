@@ -1,10 +1,9 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from rest_framework import viewsets, generics
-from rest_framework.permissions import IsAdminUser
 
 from academy.models import Course, Lesson, Pay
-from academy.permissions import IsModerator, IsOwner, IsOwnerOrStaff, IsStaff
+from academy.permissions import IsModerator, IsOwner, IsOwnerOrStaff
 from academy.serializers import CourseSerializer, LessonSerializer, PaySerializer, UserPaySerializer, \
     CourseCreateSerializer
 from user.models import User
