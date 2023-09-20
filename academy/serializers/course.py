@@ -1,7 +1,11 @@
+from random import randint
+
 from rest_framework import serializers
 
 from academy.models import Course, Lesson, Subscription
 from .lesson import LessonSerializer
+from ..services import Payment
+
 
 class CourseCreateSerializer(serializers.ModelSerializer):
     lesson = LessonSerializer(many=True, source='lesson_set')
@@ -25,6 +29,7 @@ class CourseSerializer(serializers.ModelSerializer):
     count_lesson = serializers.SerializerMethodField()
     lesson = LessonSerializer(source='lesson_set', many=True)
     subscribe = serializers.SerializerMethodField()
+    strip = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
@@ -38,7 +43,16 @@ class CourseSerializer(serializers.ModelSerializer):
     def get_subscribe(self, instance):
         user = self.context['request'].user
         if Subscription.objects.filter(user=user, course=instance):
-            return 'True'
+            return True
 
         else:
             return False
+
+    def get_strip(self, instance):
+        if self.get_subscribe(instance):
+            return 'Курс оплачен'
+        else:
+            product_name = instance.name
+            price_product = randint(1, 20000)
+            payment = Payment(product_name, price_product)
+            return payment.payment_url

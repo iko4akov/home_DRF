@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 
 from academy.apps import AcademyConfig
 from rest_framework.routers import DefaultRouter
