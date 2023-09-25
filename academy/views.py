@@ -1,7 +1,6 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from rest_framework import viewsets, generics
-from rest_framework.permissions import AllowAny
 
 from academy.models import Course, Lesson, Pay, Subscription
 from academy.paginators import AcademyPaginator
@@ -9,6 +8,7 @@ from academy.permissions import IsModerator, IsOwner, IsOwnerOrStaff
 from academy.serializers import CourseSerializer, LessonSerializer, PaySerializer, UserPaySerializer, \
     CourseCreateSerializer
 from academy.serializers.subscription import SubscriptionSerializer
+from academy.tasks import mailer
 from user.models import User
 
 
@@ -33,6 +33,7 @@ class CourseViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         new_course = serializer.save()
         new_course.owner = self.request.user
+        mailer.delay()
         new_course.save()
 
     def get_permissions(self):
@@ -54,6 +55,7 @@ class LessonCreateAPIView(generics.CreateAPIView):
     def perform_create(self, serializer):
         new_lesson = serializer.save()
         new_lesson.owner = self.request.user
+        mailer.delay()
         new_lesson.save()
 
 
