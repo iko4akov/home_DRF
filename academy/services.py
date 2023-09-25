@@ -1,8 +1,16 @@
+import json
 import os
+from datetime import datetime, timedelta
 
 import requests
+from django.core.mail import send_mail
+from django_celery_beat.models import IntervalSchedule, PeriodicTask
 
+from academy.models import Subscription
 from config import settings
+from config.settings import EMAIL_HOST_USER
+from user.models import User
+
 
 class Payment:
 
@@ -40,3 +48,21 @@ class Payment:
         respounse = requests.post(url=self.url + '/prices', auth=self.auth, data=data)
         return respounse.json()['id']
 
+
+
+def set_schelude(*args, **kwargs):
+    schedule, created = IntervalSchedule.objects.get_or_create(
+        every=10,
+        period=IntervalSchedule.SECONDS,
+    )
+
+    PeriodicTask.objects.create(
+        interval=schedule,                  # we created this above.
+        name='Importing contacts',          # simply describes this periodic task.
+        task='academy.tasks.check_is_active',  # name of task.
+        args=json.dumps(['arg1', 'arg2']),
+        kwargs=json.dumps({
+           'be_careful': True,
+        }),
+        expires=datetime.utcnow() + timedelta(seconds=30)
+)

@@ -15,6 +15,7 @@ class User(AbstractUser):
     email = models.EmailField(verbose_name='Email', unique=True)
     check_email = models.BooleanField(default=False, verbose_name='Check')
     verify_number = models.CharField(max_length=150, verbose_name='verify_number', **NULLABLE)
+    last_login = models.DateField(verbose_name='последний вход')
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
