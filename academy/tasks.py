@@ -25,12 +25,12 @@ def mailer():
         )
 
 def check_is_active():
-    print('asdsafgsag')
-    # users = User.objects.filter(is_active=True)
-    # now = timezone.now().strftime("%Y-%m-%d")
-    #
-    # for user in users:
-    #     different = datetime.fromisoformat(now) - datetime.fromisoformat(user.last_login)
-    #     if different > 30:
-    #         user.is_active = False
-    #         user.save()
+    
+    users = User.objects.filter(is_active=True)
+    now = timezone.now().strftime("%Y-%m-%d")
+    
+    for user in users:
+         different = datetime.fromisoformat(now) - datetime.fromisoformat(user.last_login)
+         if different > 30:
+             user.is_active = False
+             user.save()
