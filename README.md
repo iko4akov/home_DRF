@@ -1,8 +1,3 @@
-# deploy add to docker-compose:
-1. `docker-compose build`
-2. `docker-compose python3 manage.py migrate`
-3. `docker-compose run`
-4. use http://localhost:8000/
 
 # Deploy app to docker:
 1. run postgreSQL:
@@ -110,4 +105,10 @@ celery -A config worker -l INFO
 celery -A config beat -l INFO -s django
 
 echo $(cat /etc/resolv.conf | grep nameserver | awk '{print $2}')
+
+# deploy add to docker-compose:
+1. `docker-compose build`
+2. `docker-compose python3 manage.py migrate`
+3. `docker-compose run`
+4. use http://localhost:8000/
 
