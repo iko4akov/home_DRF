@@ -1,7 +1,7 @@
 # deploy add to docker-compose:
 1. `docker-compose build`
-2. `docker-compose run`
-3. `docker-compose python3 manage.py migrate`
+2. `docker-compose python3 manage.py migrate`
+3. `docker-compose run`
 4. use http://localhost:8000/
 
 # Deploy app to docker:
