@@ -1,3 +1,17 @@
+# Deploy app to docker:
+1. run postgreSQL:
+    - load image postgres:
+        - `docker pull postgresql:latest`
+    - run postgres-container with name:`my_postgres`
+        - `docker run --name my_postgres -e POSTGRES_PASSWORD=mysecretpassword -d postgres:latest`
+    - connect for database(postgres in container):
+        - `docker exec -it my_postgres psql -U postgres`
+    - create database for work app, name = from `.env` import `DB_NAME` 
+2. create image app with name `my_app_name`:
+    - `docker build -t my_app .`
+3. run docker container with name `my_app`:
+    - `docker run -p 8080:80 my_app`
+    - 
 # Run project
 
 - `clone repo`
@@ -88,3 +102,6 @@ celery -A config worker -l INFO
 
 периожические
 celery -A config beat -l INFO -s django
+
+echo $(cat /etc/resolv.conf | grep nameserver | awk '{print $2}')
+
