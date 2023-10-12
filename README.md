@@ -1,3 +1,9 @@
+# deploy add to docker-compose:
+1. `docker-compose build`
+2. `docker-compose run`
+3. `docker-compose python3 manage.py migrate`
+4. use http://localhost:8000/
+
 # Deploy app to docker:
 1. run postgreSQL:
     - load image postgres:
@@ -10,7 +16,7 @@
 2. create image app with name `my_app_name`:
     - `docker build -t my_app .`
 3. run docker container with name `my_app`:
-    - `docker run -p 8080:80 my_app`
+    - `docker run -p 8080:80 --name cont_app my_app`
     - 
 # Run project
 
